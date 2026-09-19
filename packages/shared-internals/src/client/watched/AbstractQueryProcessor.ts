@@ -16,6 +16,11 @@ export interface AbstractQueryProcessorOptions<Data, Settings extends WatchedQue
   db: BasePowerSyncDatabase;
   watchOptions: Settings;
   placeholderData: Data;
+  /**
+   * Rows to construct the query's state with, treated as a real result. Read
+   * synchronously during construction, so it does not wait on the database.
+   */
+  initialData?: Data;
 }
 
 /**
@@ -73,6 +78,21 @@ export abstract class AbstractQueryProcessor<
   }
 
   protected constructInitialState(): WatchedQueryState<Data> {
+    const { initialData } = this.options;
+    if (initialData !== undefined) {
+      // Supplied rows count as a result, not a stand-in: the consumer has data to render
+      // now, so the query is not loading. `linkQuery` seeds the differential comparison
+      // map from `state.data`, which means these rows also become the baseline the first
+      // live result is diffed against — without that, every existing row would be
+      // reported as an insert and the consumer would repaint everything it just drew.
+      return {
+        isLoading: false,
+        isFetching: this.reportFetching,
+        error: null,
+        lastUpdated: new Date(),
+        data: initialData
+      };
+    }
     return {
       isLoading: true,
       isFetching: this.reportFetching, // Only set to true if we will report updates in future

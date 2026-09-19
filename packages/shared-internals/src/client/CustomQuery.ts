@@ -39,6 +39,7 @@ export class CustomQuery<RowType> implements Query<RowType> {
       db: this.options.db,
       comparator: watchOptions?.comparator ?? FalsyComparator,
       placeholderData: watchOptions?.placeholderData ?? [],
+      initialData: watchOptions?.initialData,
       watchOptions: {
         ...this.resolveOptions(watchOptions),
         query: this.options.query
@@ -51,6 +52,7 @@ export class CustomQuery<RowType> implements Query<RowType> {
       db: this.options.db,
       rowComparator: differentialWatchOptions?.rowComparator,
       placeholderData: differentialWatchOptions?.placeholderData ?? [],
+      initialData: differentialWatchOptions?.initialData,
       watchOptions: {
         ...this.resolveOptions(differentialWatchOptions),
         query: this.options.query

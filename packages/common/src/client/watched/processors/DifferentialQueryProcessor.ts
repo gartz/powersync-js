@@ -67,6 +67,14 @@ export interface DifferentialWatchedQueryOptions<RowType> extends WatchedQueryOp
   placeholderData?: RowType[];
 
   /**
+   * Rows to present as the query's first result, treated as a real result rather than a
+   * stand-in — see {@link StandardWatchedQueryOptions.initialData}. For a differential
+   * watch these rows also become the baseline the first live result is diffed against,
+   * which is the part a caller cannot arrange for itself.
+   */
+  initialData?: RowType[];
+
+  /**
    * Row comparator used to identify and compare rows in the result set.
    * If not provided, the default comparator will be used which keys items by their `id` property if available,
    * otherwise it uses JSON stringification of the entire item for keying and comparison.

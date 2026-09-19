@@ -63,6 +63,25 @@ export interface StandardWatchedQueryOptions<RowType> extends WatchedQueryOption
    * @default []
    */
   placeholderData?: RowType[];
+
+  /**
+   * Rows to present as the query's first result, in place of running the query for it.
+   *
+   * Unlike {@link placeholderData}, this is treated as a real result rather than a
+   * stand-in: the watched query is constructed with `isLoading` already false and a
+   * `lastUpdated` timestamp, and a differential watch diffs its first live result
+   * against these rows instead of against nothing. Supplying them through
+   * `placeholderData` would report every existing row as an insert.
+   *
+   * The value is read while the watched query is being constructed, so it is available
+   * before the database is ready — which is the point. A caller holding rows from a
+   * cache, a server-rendered payload or a previous page does not have to wait for the
+   * file to open, the schema to be applied and the sync status to resolve before
+   * anything can be shown.
+   *
+   * The live result still runs and replaces these rows when it arrives.
+   */
+  initialData?: RowType[];
 }
 
 /**
